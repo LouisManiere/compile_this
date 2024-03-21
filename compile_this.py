@@ -31,11 +31,11 @@ def choose_files():
             except Exception as e:
                 print(f"Error reading file: {e}")
         if all_dfs:
-            compiled_df = pd.concat(all_dfs)
+            compiled_df = pd.concat(all_dfs, ignore_index=True)
             compiled_df.to_csv("compiled.csv", index=False)
-            print("Compiled CSV file saved as 'compiled.csv'")
+            status_label.config(text="Compiled CSV file saved as 'compiled.csv'", fg="green")
         else:
-            print("No CSV files were successfully processed.")
+            status_label.config(text="No CSV files were successfully processed.", fg="red")
 
 # Create main window
 root = tk.Tk()
@@ -91,5 +91,9 @@ entry_datetime.grid(row=6, column=1, padx=5, pady=5)
 # Process Button
 button_browse = tk.Button(root, text="Browse", command=choose_files)
 button_browse.grid(row=7, column=0, padx=5, pady=5, sticky="w")
+
+# Status Label
+status_label = tk.Label(root, text="", fg="black")
+status_label.grid(row=8, column=0, padx=5, pady=5, sticky="w")
 
 root.mainloop()
