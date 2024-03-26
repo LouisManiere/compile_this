@@ -1,8 +1,8 @@
 # compile_this
-Compile time series dataset
-## Installation
 
-Create a python 3 virtual environment
+Compile time series dataset
+
+## Installation
 
 Create a Python 3 virtual environment and install dependencies.
 
