@@ -21,11 +21,6 @@ def choose_files():
             footer = int(entry_footer.get())
             datetime_field = entry_datetime.get()
             encoding = combobox_encoding.get()
-            has_combine_date_time = var_combine_date_time.get()
-            print("Header:", has_header)
-            print("Separator:", separator)
-            print("Decimal:", decimal)
-            print("Date time field:", datetime_field)
             try:
                 df = pd.read_csv(file_path, header=0 if has_header else None, sep=separator, engine='python', 
                                  skipfooter=footer, skiprows=range(skiprows_min, skiprows_max), 
@@ -35,9 +30,7 @@ def choose_files():
                 print(f"Error reading file: {e}")
         if all_dfs:
             compiled_df = pd.concat(all_dfs, ignore_index=True)
-            if has_combine_date_time:
-                compiled_df[datetime_field] = pd.to_datetime(compiled_df["date"] + " " + compiled_df["time"])
-
+            compiled_df = pd.to_datetime(df[datetime_field])
             compiled_df.to_csv("compiled.csv", index=False)
             status_label.config(text="Compiled CSV file saved as 'compiled.csv'", fg="green")
         else:
@@ -75,7 +68,7 @@ label_skiprows = tk.Label(root, text="Lines to skip (from - to):")
 label_skiprows.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 entry_skiprows_min = tk.Entry(root, width=5)
 entry_skiprows_max = tk.Entry(root, width=5)
-entry_skiprows_min.insert(tk.END, "0")  # Default value
+entry_skiprows_min.insert(tk.END, "0")  # Default valuecompile_this.py
 entry_skiprows_min.grid(row=4, column=1, padx=5, pady=5)
 entry_skiprows_max.insert(tk.END, "50")  # Default value
 entry_skiprows_max.grid(row=4, column=2, padx=5, pady=5)
@@ -92,28 +85,22 @@ label_encoding = tk.Label(root, text="Encoding:")
 label_encoding.grid(row=6, column=0, padx=5, pady=5, sticky="w")
 encoding_values = ["utf-8", "latin1"]
 combobox_encoding = ttk.Combobox(root, values=encoding_values)
-combobox_encoding.set(encoding_values[0]) # Default value
+combobox_encoding.set(encoding_values[1]) # Default value
 combobox_encoding.grid(row=6, column=1, padx=5, pady=5)
-
-# Header Checkbox
-var_combine_date_time = tk.BooleanVar()
-checkbox_var_combine_date_time = tk.Checkbutton(root, text="Combine date and time field", 
-                                                variable=var_combine_date_time)
-checkbox_var_combine_date_time.grid(row=7, column=0, padx=5, pady=5, sticky="w")
 
 # Date time Entry
 label_datetime = tk.Label(root, text="Date time field:")
-label_datetime.grid(row=8, column=0, padx=5, pady=5, sticky="w")
+label_datetime.grid(row=7, column=0, padx=5, pady=5, sticky="w")
 entry_datetime = tk.Entry(root, width=10)
-entry_datetime.insert(tk.END, "date")  # Default value
-entry_datetime.grid(row=8, column=1, padx=5, pady=5)
+entry_datetime.insert(tk.END, "Date")  # Default value
+entry_datetime.grid(row=7, column=1, padx=5, pady=5)
 
 # Process Button
 button_browse = tk.Button(root, text="Browse", command=choose_files)
-button_browse.grid(row=9, column=0, padx=5, pady=5, sticky="w")
+button_browse.grid(row=8, column=0, padx=5, pady=5, sticky="w")
 
 # Status Label
 status_label = tk.Label(root, text="", fg="black")
-status_label.grid(row=10, column=0, padx=5, pady=5, sticky="w")
+status_label.grid(row=9, column=0, padx=5, pady=5, sticky="w")
 
 root.mainloop()
