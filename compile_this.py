@@ -3,11 +3,12 @@
 # License: MIT
 
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 import pandas as pd
 
 def choose_files():
-    file_paths = filedialog.askopenfilenames(filetypes=[("CSV files", "*.csv")])
+    file_paths = filedialog.askopenfilenames(filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
     if file_paths:
         all_dfs = []
         for file_path in file_paths:
@@ -19,6 +20,7 @@ def choose_files():
             skiprows_max = int(entry_skiprows_max.get())
             footer = int(entry_footer.get())
             datetime_field = entry_datetime.get()
+            encoding = combobox_encoding.get()
             print("Header:", has_header)
             print("Separator:", separator)
             print("Decimal:", decimal)
@@ -26,7 +28,7 @@ def choose_files():
             try:
                 df = pd.read_csv(file_path, header=0 if has_header else None, sep=separator, engine='python', 
                                  skipfooter=footer, skiprows=range(skiprows_min, skiprows_max), 
-                                 decimal=decimal, index_col=0)
+                                 decimal=decimal, encoding=encoding)
                 all_dfs.append(df)
             except Exception as e:
                 print(f"Error reading file: {e}")
@@ -54,7 +56,7 @@ checkbox_header.grid(row=1, column=0, padx=5, pady=5, sticky="w")
 label_separator = tk.Label(root, text="Separator:")
 label_separator.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 entry_separator = tk.Entry(root, width=2)
-entry_separator.insert(tk.END, ",")  # Default value
+entry_separator.insert(tk.END, ";")  # Default value
 entry_separator.grid(row=2, column=1, padx=5, pady=5)
 
 # Decimal Entry
@@ -71,7 +73,7 @@ entry_skiprows_min = tk.Entry(root, width=5)
 entry_skiprows_max = tk.Entry(root, width=5)
 entry_skiprows_min.insert(tk.END, "0")  # Default value
 entry_skiprows_min.grid(row=4, column=1, padx=5, pady=5)
-entry_skiprows_max.insert(tk.END, "0")  # Default value
+entry_skiprows_max.insert(tk.END, "50")  # Default value
 entry_skiprows_max.grid(row=4, column=2, padx=5, pady=5)
 
 # Footer Entry
@@ -81,19 +83,28 @@ entry_footer = tk.Entry(root, width=5)
 entry_footer.insert(tk.END, "1")  # Default value
 entry_footer.grid(row=5, column=1, padx=5, pady=5)
 
+# Encoding Entry
+label_encoding = tk.Label(root, text="Encoding:")
+label_encoding.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+encoding_values = ["utf-8", "latin1"]
+combobox_encoding = ttk.Combobox(root, values=encoding_values)
+# combobox_encoding.pack()
+combobox_encoding.set(encoding_values[0])
+combobox_encoding.grid(row=6, column=1, padx=5, pady=5)
+
 # Date time Entry
 label_datetime = tk.Label(root, text="Date time field:")
-label_datetime.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+label_datetime.grid(row=7, column=0, padx=5, pady=5, sticky="w")
 entry_datetime = tk.Entry(root, width=10)
 entry_datetime.insert(tk.END, "date")  # Default value
-entry_datetime.grid(row=6, column=1, padx=5, pady=5)
+entry_datetime.grid(row=7, column=1, padx=5, pady=5)
 
 # Process Button
 button_browse = tk.Button(root, text="Browse", command=choose_files)
-button_browse.grid(row=7, column=0, padx=5, pady=5, sticky="w")
+button_browse.grid(row=8, column=0, padx=5, pady=5, sticky="w")
 
 # Status Label
 status_label = tk.Label(root, text="", fg="black")
-status_label.grid(row=8, column=0, padx=5, pady=5, sticky="w")
+status_label.grid(row=9, column=0, padx=5, pady=5, sticky="w")
 
 root.mainloop()
