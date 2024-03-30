@@ -113,6 +113,7 @@ class CSVCombinerApp:
         if all_dfs:
             combined_df = pd.concat(all_dfs, ignore_index=True)
             combined_df.rename(columns={date_time_field: "date_time"}, inplace=True)
+            combined_df["date_time"] = pd.to_datetime(combined_df["date_time"], format="%Y-%m-%d %H:%M:%S")
             combined_df.drop_duplicates(subset="date_time", inplace=True)
             self.combined_df = combined_df.sort_values(by="date_time")
             self.combined_df = combined_df
