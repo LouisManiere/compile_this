@@ -98,6 +98,7 @@ class CSVCombinerApp:
                 skiprows_max = int(self.skiprows_max_entry.get())  # Define the "skiprows_max" variable
                 decimal = self.decimal_entry.get()  # Define the "decimal" variable
                 encoding = self.encoding_combobox.get()  # Define the "encoding" variable
+                date_time_field = self.datetime_field_entry.get() # Define date_time field name
                 
                 df = pd.read_csv(file_path, header=0 if has_header else None, sep=separator, engine='python', 
                                  skipfooter=footer, skiprows=range(skiprows_min, skiprows_max), 
@@ -107,7 +108,9 @@ class CSVCombinerApp:
             print(f"Error reading file: {e}")
 
         if all_dfs:
-            combined_df = pd.concat(all_dfs, ignore_index=True)  # Use the "all_dfs" list to concatenate the dataframes
+            combined_df = pd.concat(all_dfs, ignore_index=True)
+            combined_df.drop_duplicates(subset=date_time_field, inplace=True)
+            self.combined_df = combined_df.sort_values(by=date_time_field)
             self.combined_df = combined_df
             messagebox.showinfo("Combination Complete", "Files have been combined successfully.")
             
@@ -116,8 +119,10 @@ class CSVCombinerApp:
             messagebox.showwarning("No Combined Data", "Please combine CSV files first.")  # Use the messagebox module from tkinter
             return
                 
-        output_file = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
-        if output_file:
+        output_folder = filedialog.askdirectory()
+        if output_folder:
+            timestamp = pd.Timestamp.now().strftime("%Y%m%d%H%M%S")
+            output_file = f"{output_folder}/{timestamp}_{self.sensor_name_entry.get()}_combine.csv"
             self.combined_df.to_csv(output_file, index=False)
             messagebox.showinfo("Save Complete", f"Combined CSV file saved to:\n{output_file}")  # Use the messagebox module from tkinter
 
