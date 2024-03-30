@@ -51,7 +51,7 @@ class CSVCombinerApp:
         self.decimal_label.grid(row=7, column=0, padx=5, pady=5, sticky=tk.W)
         self.decimal_entry = tk.Entry(root, width=2)
         self.decimal_entry.grid(row=7, column=1, padx=5, pady=5, sticky=tk.W)
-        self.decimal_entry.insert(tk.END, ".")
+        self.decimal_entry.insert(tk.END, ",")
 
         self.skiprows_label = tk.Label(root, text="Lines to skip (from - to):")
         self.skiprows_label.grid(row=8, column=0, padx=5, pady=5, sticky=tk.W)
@@ -77,6 +77,9 @@ class CSVCombinerApp:
 
         self.save_button = tk.Button(root, text="Save Combined CSV", command=self.save_combined_csv)
         self.save_button.grid(row=11, column=0, columnspan=2, padx=5, pady=5)
+
+        self.save_excel_button = tk.Button(root, text="Save Combined Excel", command=self.save_combined_excel)
+        self.save_excel_button.grid(row=12, column=0, columnspan=2, padx=5, pady=5)
     
     def add_files(self):
         files = filedialog.askopenfilenames(filetypes=[("CSV Files", "*.csv"), ("All files", "*.*")])
@@ -125,6 +128,19 @@ class CSVCombinerApp:
             output_file = f"{output_folder}/{timestamp}_{self.sensor_name_entry.get()}_combine.csv"
             self.combined_df.to_csv(output_file, index=False)
             messagebox.showinfo("Save Complete", f"Combined CSV file saved to:\n{output_file}")  # Use the messagebox module from tkinter
+
+        
+    def save_combined_excel(self):
+        if not hasattr(self, 'combined_df'):
+            messagebox.showwarning("No Combined Data", "Please combine CSV files first.")  # Use the messagebox module from tkinter
+            return
+                    
+        output_folder = filedialog.askdirectory()
+        if output_folder:
+            timestamp = pd.Timestamp.now().strftime("%Y%m%d%H%M%S")
+            output_file = f"{output_folder}/{timestamp}_{self.sensor_name_entry.get()}_combine.xlsx"
+            self.combined_df.to_excel(output_file, sheet_name=self.sensor_name_entry.get(), index=False)
+            messagebox.showinfo("Save Complete", f"Combined Excel file saved to:\n{output_file}")  # Use the messagebox module from tkinter
 
 if __name__ == "__main__":
     root = tk.Tk()
