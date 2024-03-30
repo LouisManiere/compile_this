@@ -30,11 +30,17 @@ class CSVCombinerApp:
         self.sensor_name_entry.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
         self.sensor_name_entry.insert(tk.END, "Diver_A")  # Default value
 
-        self.datetime_field_label = tk.Label(root, text="Date Time Field:")
-        self.datetime_field_label.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
-        self.datetime_field_entry = tk.Entry(root, width=10)
-        self.datetime_field_entry.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
-        self.datetime_field_entry.insert(tk.END, "Date/time")
+        self.date_field_label = tk.Label(root, text="Date Field:")
+        self.date_field_label.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
+        self.date_field_entry = tk.Entry(root, width=10)
+        self.date_field_entry.grid(row=4, column=1, padx=5, pady=5, sticky=tk.W)
+        self.date_field_entry.insert(tk.END, "Date")
+
+        self.time_field_label = tk.Label(root, text="Time Field:")
+        self.time_field_label.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
+        self.time_field_entry = tk.Entry(root, width=10)
+        self.time_field_entry.grid(row=4, column=3, padx=5, pady=5, sticky=tk.W)
+        self.time_field_entry.insert(tk.END, "Time")
 
         self.header_var = tk.BooleanVar()
         self.header_checkbox = tk.Checkbutton(root, text="Files have headers", variable=self.header_var)
@@ -60,13 +66,13 @@ class CSVCombinerApp:
         self.skiprows_min_entry.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
         self.skiprows_max_entry.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
         self.skiprows_min_entry.insert(tk.END, "0")
-        self.skiprows_max_entry.insert(tk.END, "50")
+        self.skiprows_max_entry.insert(tk.END, "9")
 
         self.footer_label = tk.Label(root, text="Footer lines to skip:")
         self.footer_label.grid(row=9, column=0, padx=5, pady=5, sticky=tk.W)
         self.footer_entry = tk.Entry(root, width=5)
         self.footer_entry.grid(row=9, column=1, padx=5, pady=5, sticky=tk.W)
-        self.footer_entry.insert(tk.END, "1")
+        self.footer_entry.insert(tk.END, "0")
 
         self.encoding_label = tk.Label(root, text="Encoding:")
         self.encoding_label.grid(row=10, column=0, padx=5, pady=5, sticky=tk.W)
@@ -101,7 +107,8 @@ class CSVCombinerApp:
                 skiprows_max = int(self.skiprows_max_entry.get())  # Define the "skiprows_max" variable
                 decimal = self.decimal_entry.get()  # Define the "decimal" variable
                 encoding = self.encoding_combobox.get()  # Define the "encoding" variable
-                date_time_field = self.datetime_field_entry.get() # Define date_time field name
+                date_field = self.date_field_entry.get() # Define date field name
+                time_field = self.time_field_entry.get() # Define time field name
                 
                 df = pd.read_csv(file_path, header=0 if has_header else None, sep=separator, engine='python', 
                                  skipfooter=footer, skiprows=range(skiprows_min, skiprows_max), 
@@ -112,9 +119,8 @@ class CSVCombinerApp:
 
         if all_dfs:
             combined_df = pd.concat(all_dfs, ignore_index=True)
-            combined_df.rename(columns={date_time_field: "date_time"}, inplace=True)
-            combined_df.drop_duplicates(subset="date_time", inplace=True)
-            self.combined_df = combined_df.sort_values(by="date_time")
+            combined_df.drop_duplicates(subset=date_time_field, inplace=True)
+            self.combined_df = combined_df.sort_values(by=date_time_field)
             self.combined_df = combined_df
             messagebox.showinfo("Combination Complete", "Files have been combined successfully.")
             
