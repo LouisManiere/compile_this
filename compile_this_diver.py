@@ -82,7 +82,7 @@ class CSVCombinerApp:
         self.save_excel_button.grid(row=12, column=0, columnspan=2, padx=5, pady=5)
     
     def add_files(self):
-        files = filedialog.askopenfilenames(filetypes=[("CSV Files", "*.csv"), ("All files", "*.*")])
+        files = filedialog.askopenfilenames(filetypes=[("All files", "*.*")])
         for file in files:
             self.input_files.append(file)
             self.file_listbox.insert(tk.END, file)
@@ -112,9 +112,13 @@ class CSVCombinerApp:
 
         if all_dfs:
             combined_df = pd.concat(all_dfs, ignore_index=True)
-            combined_df.rename(columns={date_time_field: "date_time"}, inplace=True)
+            combined_df.rename(columns={date_time_field: "date_time",
+                                        "Pression[cmH2O]": "level_m",
+                                        "Température[°C]": "temp_c"}, inplace=True)
+            print(combined_df)
             combined_df["date_time"] = pd.to_datetime(combined_df["date_time"], format="%Y/%m/%d %H:%M:%S")
             combined_df.drop_duplicates(subset="date_time", inplace=True)
+            combined_df["level_m"] = combined_df["level_m"]/100
             self.combined_df = combined_df.sort_values(by="date_time")
             self.combined_df = combined_df
             messagebox.showinfo("Combination Complete", "Files have been combined successfully.")

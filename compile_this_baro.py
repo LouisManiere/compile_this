@@ -121,6 +121,9 @@ class CSVCombinerApp:
             combined_df = pd.concat(all_dfs, ignore_index=True)
             combined_df["date_time"] = pd.to_datetime(combined_df[date_field] + ' ' + combined_df[time_field], 
                                                       format='%d/%m/%Y %H:%M:%S')
+            combined_df.rename(columns = {"LEVEL": "level_m",
+                                          "TEMPERATURE": "temp_c"}, inplace=True)
+            combined_df["level_m"] = combined_df["level_m"]/10
             combined_df = combined_df.drop(columns=[date_field, time_field, "ms"])
             combined_df = combined_df[["date_time"] + list(combined_df.columns[:-1])]
             combined_df.drop_duplicates(subset="date_time", inplace=True)

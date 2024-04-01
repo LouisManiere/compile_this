@@ -28,7 +28,7 @@ class CSVCombinerApp:
         self.sensor_name_label.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
         self.sensor_name_entry = tk.Entry(root, width=10)
         self.sensor_name_entry.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        self.sensor_name_entry.insert(tk.END, "Baro_A")  # Default value
+        self.sensor_name_entry.insert(tk.END, "Solinst_A")  # Default value
 
         self.date_field_label = tk.Label(root, text="Date Field:")
         self.date_field_label.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
@@ -121,6 +121,9 @@ class CSVCombinerApp:
             combined_df = pd.concat(all_dfs, ignore_index=True)
             combined_df["date_time"] = pd.to_datetime(combined_df[date_field] + ' ' + combined_df[time_field], 
                                                       format='%d/%m/%Y %H:%M:%S')
+            combined_df.rename(columns = {"LEVEL": "level_m",
+                                          "TEMPERATURE": "temp_c"}, inplace=True)
+            combined_df["level_m"] = combined_df["level_m"]/10
             combined_df = combined_df.drop(columns=[date_field, time_field, "ms"])
             combined_df = combined_df[["date_time"] + list(combined_df.columns[:-1])]
             combined_df.drop_duplicates(subset="date_time", inplace=True)
