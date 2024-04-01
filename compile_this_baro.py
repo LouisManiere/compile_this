@@ -28,7 +28,7 @@ class CSVCombinerApp:
         self.sensor_name_label.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
         self.sensor_name_entry = tk.Entry(root, width=10)
         self.sensor_name_entry.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
-        self.sensor_name_entry.insert(tk.END, "Diver_A")  # Default value
+        self.sensor_name_entry.insert(tk.END, "Baro_A")  # Default value
 
         self.date_field_label = tk.Label(root, text="Date Field:")
         self.date_field_label.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
@@ -66,7 +66,7 @@ class CSVCombinerApp:
         self.skiprows_min_entry.grid(row=8, column=1, padx=5, pady=5, sticky=tk.W)
         self.skiprows_max_entry.grid(row=8, column=2, padx=5, pady=5, sticky=tk.W)
         self.skiprows_min_entry.insert(tk.END, "0")
-        self.skiprows_max_entry.insert(tk.END, "9")
+        self.skiprows_max_entry.insert(tk.END, "10")
 
         self.footer_label = tk.Label(root, text="Footer lines to skip:")
         self.footer_label.grid(row=9, column=0, padx=5, pady=5, sticky=tk.W)
@@ -119,8 +119,12 @@ class CSVCombinerApp:
 
         if all_dfs:
             combined_df = pd.concat(all_dfs, ignore_index=True)
-            combined_df.drop_duplicates(subset=date_time_field, inplace=True)
-            self.combined_df = combined_df.sort_values(by=date_time_field)
+            combined_df["date_time"] = pd.to_datetime(combined_df[date_field] + ' ' + combined_df[time_field], 
+                                                      format='%d/%m/%Y %H:%M:%S')
+            combined_df = combined_df.drop(columns=[date_field, time_field, "ms"])
+            combined_df = combined_df[["date_time"] + list(combined_df.columns[:-1])]
+            combined_df.drop_duplicates(subset="date_time", inplace=True)
+            self.combined_df = combined_df.sort_values(by="date_time")
             self.combined_df = combined_df
             messagebox.showinfo("Combination Complete", "Files have been combined successfully.")
             
