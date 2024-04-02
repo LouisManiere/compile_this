@@ -18,7 +18,7 @@ cd Path/to/my/folder
 # copy mapdo repository with git
 git clone https://github.com/LouisManiere/compile_this.git
 # create a new virtual environnement in python 3
-python3.12 -m venv env --prompt compile_this
+python -m venv env --prompt compile_this
 # activate your new environment
 # Windows
 .\env\Scripts\activate
