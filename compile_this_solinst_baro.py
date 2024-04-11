@@ -10,7 +10,7 @@ class CSVCompiler:
         self.separator = ";"
         self.footer = 0
         self.skiprows_min = 0
-        self.skiprows_max = 11
+        self.skiprows_max = 10
         self.decimal = ","
         self.encoding = "latin1"
         self.date_field = "Date"
@@ -58,6 +58,7 @@ class CSVCompiler:
 
                 combined_df.drop_duplicates(subset=self.datetime_field_output, inplace=True) # remove duplicate rows from datetime_field_output
 
+                combined_df[self.level_field_output] = combined_df[self.level_field_output]/10 # divide the "level_m" column by 10
                 self.combined_df = combined_df.sort_values(by=self.datetime_field_output) # sort the dataframe by datetime_field_output
                 self.combined_df = combined_df
             
