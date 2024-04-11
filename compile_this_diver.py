@@ -26,8 +26,6 @@ class CSVCompiler:
             self.folder_path = os.path.dirname(sys.executable)
         elif __file__:
             self.folder_path = os.path.dirname(__file__)
-        # self.folder_path = os.path.dirname(__file__)
-        print(self.folder_path)
 
     def compile_csv_files(self):
         try:
