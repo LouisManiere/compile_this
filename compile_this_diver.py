@@ -53,7 +53,7 @@ class CSVCompiler:
                 combined_df[self.datetime_field_output] = pd.to_datetime(combined_df[self.datetime_field_output], format="%Y/%m/%d %H:%M:%S")
                 combined_df.drop_duplicates(subset=self.datetime_field_output, inplace=True)
                 combined_df[self.level_field_output] = combined_df[self.level_field_output]/100
-                self.combined_df = combined_df.sort_values(by=self.datetime_field_output)
+                combined_df = combined_df.sort_values(by=self.datetime_field_output)
                 self.combined_df = combined_df
             
             # write compiled data to a new CSV file

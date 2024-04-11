@@ -2,6 +2,12 @@
 
 Compile time series dataset
 
+## Baro, Diver, Solinst sensors
+
+Baro = compile_this_solinst_baro.py
+F, L, M, N, RAmont, RAval = compile_this_solinst.py
+A, B, C, D, E, G, H, I, J, ZGraviere = compile_this_solinst_baro.py
+
 ## Installation
 
 Create a Python 3 virtual environment and install dependencies.
